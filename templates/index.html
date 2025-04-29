@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #0a0a0a; /* Deep black */
+            --secondary-color: #1f2a44; /* Dark gray */
+            --accent-color: #2dd4bf; /* Vibrant teal */
+            --light-color: #e5e7eb; /* Light gray for text */
+            --dark-color: #ffffff; /* White for text */
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--dark-color);
+            padding: 3rem 0;
+            margin-bottom: 2.5rem;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(45, 212, 191, 0.2), transparent 50%);
+            opacity: 0.3;
+        }
+
+        .task-container {
+            background: linear-gradient(145deg, var(--secondary-color), #2d3748);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            margin-bottom: 2.5rem;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .task-container:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .plot-container {
+            border-radius: 12px;
+            background: #2d3748;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease;
+        }
+
+        .plot-container:hover {
+            transform: scale(1.02);
+        }
+
+        .plotly-graph {
+            width: 100%;
+            height: 500px;
+        }
+
+        .data-table {
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #2d3748; /* Fondo oscuro para la tabla */
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th, .data-table td {
+            color: var(--dark-color); /* Texto blanco para máxima visibilidad */
+            padding: 1rem; /* Espaciado para claridad */
+            border: 1px solid var(--accent-color); /* Bordes teal */
+            text-align: left;
+            font-size: 1rem; /* Tamaño de fuente legible */
+            font-weight: 400; /* Evitar texto demasiado grueso */
+        }
+
+        .data-table th {
+            background: var(--accent-color); /* Fondo teal para encabezados */
+            color: var(--primary-color); /* Texto negro para contraste */
+            font-weight: 600;
+        }
+
+        .data-table tbody tr:nth-child(odd) {
+            background: rgba(45, 212, 191, 0.1); /* Fondo alternado para filas */
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(45, 212, 191, 0.2); /* Efecto hover para interacción */
+        }
+
+        .table-responsive {
+            min-width: 100%;
+            overflow-x: auto; /* Desplazamiento horizontal en pantallas pequeñas */
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid var(--accent-color);
+            background: var(--secondary-color);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--light-color);
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: var(--primary-color);
+            color: var(--accent-color);
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            border-color: var(--accent-color);
+        }
+
+        .highlight-box {
+            background: rgba(45, 212, 191, 0.1);
+            border-left: 5px solid var(--accent-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+            transition: background 0.3s ease;
+            color: var(--dark-color); /* Texto blanco para visibilidad */
+        }
+
+        .highlight-box:hover {
+            background: rgba(45, 212, 191, 0.2);
+        }
+
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.1), rgba(31, 42, 68, 0.1));
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            color: var(--dark-color); /* Texto blanco para visibilidad */
+        }
+
+        .cluster-card {
+            background: #2d3748; /* Fondo oscuro para las tarjetas */
+            border-left: 5px solid var(--accent-color);
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            color: var(--dark-color); /* Texto blanco para visibilidad */
+            border-radius: 8px;
+        }
+
+        .cluster-card .card-title,
+        .cluster-card .card-text {
+            color: var(--dark-color); /* Texto blanco */
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--dark-color);
+            padding: 3rem 0;
+            margin-top: 4rem;
+            border-radius: 20px 20px 0 0;
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--dark-color);
+        }
+
+        .social-icons a {
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .social-icons a:hover {
+            color: var(--dark-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header text-center">
+        <div class="container position-relative">
+            <h1 class="display-4 fw-bold mb-3">Marketing IA</h1>
+            <p class="lead">Técnicas de aprendizaje automático</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4" id="taskTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="task1-tab" data-bs-toggle="tab" data-bs-target="#task1" type="button">TAREA 1</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="task2-tab" data-bs-toggle="tab" data-bs-target="#task2" type="button">TAREA 2</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="task3-tab" data-bs-toggle="tab" data-bs-target="#task3" type="button">TAREA 3</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="task4-tab" data-bs-toggle="tab" data-bs-target="#task4" type="button">TAREA 4</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="task5-tab" data-bs-toggle="tab" data-bs-target="#task5" type="button">TAREA 5</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="task6-tab" data-bs-toggle="tab" data-bs-target="#task6" type="button">TAREA 6</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="task7-tab" data-bs-toggle="tab" data-bs-target="#task7" type="button">TAREA 7</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="task8-tab" data-bs-toggle="tab" data-bs-target="#task8" type="button">TAREA 8</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="task9-tab" data-bs-toggle="tab" data-bs-target="#task9" type="button">TAREA 9</button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="taskContent">
+            <!-- Task 1 -->
+            <div class="tab-pane fade show active" id="task1" role="tabpanel">
+                <div class="task-container">
+                    <h2 class="mb-4">TAREA 1: Entender el Caso de Negocio</h2>
+                    
+                    <div id="task1-diagram" class="plot-container">
+                        <div class="plotly-graph"></div>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>Objetivo del Análisis</h4>
+                        <p>Segmentar a los clientes según sus patrones de compra para optimizar estrategias de marketing y aumentar las ventas.</p>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Task 2 -->
+            <div class="tab-pane fade" id="task2" role="tabpanel">
+                <div class="task-container">
+                    <h2 class="mb-4">TAREA 2: Importar Librerías y Datasets</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="plot-container">
+                                <h4>Distribución de Tipos de Datos</h4>
+                                <div id="task2-dtypes" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="plot-container">
+                                <h4>Valores Nulos por Columna</h4>
+                                <div id="task2-nulls" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>Resumen del Dataset</h4>
+                        <div id="task2-info" class="row"></div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+
+            <!-- Task 3 -->
+            <div class="tab-pane fade" id="task3" role="tabpanel">
+                <div class="task-container">
+                    <h2 class="mb-4">TAREA 3: Análisis Exploratorio (Parte 1)</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="plot-container">
+                                <h4>Distribución por País</h4>
+                                <div id="task3-country" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="plot-container">
+                                <h4>Línea de Producto</h4>
+                                <div id="task3-productline" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="plot-container">
+                                <h4>Tamaño de Trato</h4>
+                                <div id="task3-dealsize" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="conclusion-box">
+                        <h4>Conclusiones Iniciales</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul>
+                                    <li>El mercado estadounidense es el más importante para la empresa</li>
+                                    <li>Los productos clásicos tienen mayor demanda</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul>
+                                    <li>La mayoría de los tratos son de tamaño mediano</li>
+                                    <li>Existe potencial para expandir líneas menos populares</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 4 -->
+            <div class="tab-pane fade" id="task4" role="tabpanel">
+                <div class="task-container">
+                    <h2 class="mb-4">TAREA 4: Análisis Exploratorio (Parte 2)</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="plot-container">
+                                <h4>Matriz de Correlación</h4>
+                                <div id="task4-correlation" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="plot-container">
+                                <h4>Relación entre Variables</h4>
+                                <div id="task4-pairplot" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="plot-container">
+                                <h4>Distribución de Ventas</h4>
+                                <div id="task4-sales-dist" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="plot-container">
+                                <h4>Distribución de Cantidad Ordenada</h4>
+                                <div id="task4-qty-dist" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 5 -->
+            <div class="tab-pane fade" id="task5" role="tabpanel">
+                <div class="task-container">
+                    <h2 class="mb-4">TAREA 5: Teoría de K-Means Clustering</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="plot-container">
+                                <h4>Diagrama Conceptual de K-Means</h4>
+                                <div id="task5-diagram" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                        </div>
+                    </div>
+                    <div class="conclusion-box mt-4">
+                        <h4>Aplicación en Marketing</h4>
+                        <p>K-Means es ideal para segmentación de clientes basada en:</p>
+                        <ul>
+                            <li>Comportamiento de compra</li>
+                            <li>Características demográficas</li>
+                            <li>Patrones de gasto</li>
+                            <li>Frecuencia de compra</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 6 -->
+            <div class="tab-pane fade" id="task6" role="tabpanel">
+                <div class="task-container">
+                    <h2 class="mb-4">TAREA 6: Método del Codo para K Óptimo</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="plot-container">
+                                <h4>Método del Codo</h4>
+                                <div id="task6-elbow" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="highlight-box">
+                                <h4>Interpretación del Gráfico</h4>
+                                <p>El método del codo ayuda a determinar el número óptimo de clusters buscando el punto donde la disminución en la inercia (suma de distancias al cuadrado) comienza a estabilizarse.</p>
+                                
+                                <h4 class="mt-4">Nuestro Resultado</h4>
+                                <p id="task6-optimal"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="conclusion-box">
+                        <h4>Proceso de Decisión</h4>
+                        <p>Para confirmar el número óptimo de clusters, consideramos:</p>
+                        <ol>
+                            <li>La posición del "codo" en la gráfica</li>
+                            <li>El score de silueta para cada K</li>
+                            <li>La interpretabilidad de los clusters resultantes</li>
+                            <li>Los requisitos del negocio</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 7 -->
+            <div class="tab-pane fade" id="task7" role="tabpanel">
+                <div class="task-container">
+                    <h2 class="mb-4">TAREA 7: Aplicación de K-Means</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="plot-container">
+                                <h4>Visualización de Clusters (2D)</h4>
+                                <div id="task7-clusters" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="plot-container">
+                                <h4>Estadísticas por Cluster</h4>
+                                <div id="task7-stats"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="conclusion-box">
+                        <h4>Descripción de los Clusters</h4>
+                        <div class="row" id="task7-cluster-desc"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 8 -->
+            <div class="tab-pane fade" id="task8" role="tabpanel">
+                <div class="task-container">
+                    <h2 class="mb-4">TAREA 8: PCA y Visualización 3D</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="plot-container">
+                                <h4>Visualización 3D de Clusters</h4>
+                                <div id="task8-3d" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="plot-container">
+                                <h4>Varianza Explicada</h4>
+                                <div id="task8-variance" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="conclusion-box mt-4">
+                        <h4>Interpretación de los Clusters en 3D</h4>
+                        <p>La visualización 3D confirma que nuestros clusters están bien separados en el espacio de características reducido:</p>
+                        <ul>
+                            <li>Los grandes compradores (Cluster 0) están claramente separados</li>
+                            <li>Los compradores ocasionales (Cluster 2) forman un grupo compacto</li>
+                            <li>Los otros clusters muestran cierta superposición pero patrones distintos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 9 -->
+            <div class="tab-pane fade" id="task9" role="tabpanel">
+                <div class="task-container">
+                    <h2 class="mb-4">TAREA 9: Teoría de Autoencoders</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="plot-container">
+                                <h4>Diagrama de Autoencoder</h4>
+                                <div id="task9-diagram" class="plotly-graph"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="highlight-box">
+                                <h4>¿Qué es un Autoencoder?</h4>
+                                <p id="task9-whatis"></p>
+                                
+                                <h4 class="mt-4">Componentes Clave</h4>
+                                <div id="task9-components"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
