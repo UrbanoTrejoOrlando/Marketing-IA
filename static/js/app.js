@@ -137,7 +137,6 @@ function renderTask2(data) {
         margin: { t: 40, b: 120, l: 60, r: 20 }
     });
 
-    // Info del dataset
     const infoHtml = `
         <div class="col-md-4">
             <p><strong>Columnas Originales:</strong> ${data.data_info.original_columns}</p>
