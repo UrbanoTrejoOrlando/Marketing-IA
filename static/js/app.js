@@ -192,7 +192,6 @@ function renderTask3(data) {
         margin: { t: 40, b: 100, l: 60, r: 20 }
     });
 
-    // Gráfico por tamaño de trato
     Plotly.newPlot('task3-dealsize', [{
         type: 'bar',
         x: data.dealsize.map(d => d.dealsize),
