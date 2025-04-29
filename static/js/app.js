@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar datos para la task activa al inicio
+    
     const activeTab = document.querySelector('.nav-link.active');
     if (activeTab) {
         loadTaskData(activeTab.getAttribute('data-bs-target').replace('#', ''));
