@@ -51,7 +51,7 @@ function loadTaskData(taskId) {
 }
 
 function renderTask1(data) {
-    // Renderizar diagrama conceptual
+
     const nodes = data.nodes.map(node => ({
         ...node,
         color: getColorForLevel(node.level)
