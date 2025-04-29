@@ -113,7 +113,6 @@ function renderTask1(data) {
 }
 
 function renderTask2(data) {
-    // Gráfico de tipos de datos
     Plotly.newPlot('task2-dtypes', [{
         type: 'bar',
         x: data.dtypes.map(d => d.type),
