@@ -125,7 +125,6 @@ function renderTask2(data) {
         margin: { t: 40, b: 60, l: 60, r: 20 }
     });
 
-    // Gráfico de valores nulos
     Plotly.newPlot('task2-nulls', [{
         type: 'bar',
         x: data.nulls.map(n => n.column),
