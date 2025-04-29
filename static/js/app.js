@@ -150,7 +150,6 @@ function renderTask2(data) {
     `;
     document.getElementById('task2-info').innerHTML = infoHtml;
 
-    // Tabla de datos (simplificada)
     fetch('/api/data/head')
         .then(response => response.json())
         .then(data => {
