@@ -167,7 +167,7 @@ function renderTask2(data) {
 }
 
 function renderTask3(data) {
-    // Gráfico por país
+
     Plotly.newPlot('task3-country', [{
         type: 'bar',
         x: data.country.map(c => c.country),
