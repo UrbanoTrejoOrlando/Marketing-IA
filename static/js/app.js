@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
         loadTaskData(activeTab.getAttribute('data-bs-target').replace('#', ''));
     }
 
-    // Configurar event listeners para los tabs
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
         tab.addEventListener('shown.bs.tab', function(event) {
             const taskId = event.target.getAttribute('data-bs-target').replace('#', '');
