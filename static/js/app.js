@@ -180,7 +180,6 @@ function renderTask3(data) {
         margin: { t: 40, b: 100, l: 60, r: 20 }
     });
 
-    // Gráfico por línea de producto
     Plotly.newPlot('task3-productline', [{
         type: 'bar',
         x: data.productline.map(p => p.productline),
